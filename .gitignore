@@ -8,3 +8,8 @@
 .externalNativeBuild
 .cxx
 .kotlin/
+*.apk
+*.aab
+*.jks
+*.keystore
+*.swp
