@@ -8,10 +8,13 @@
     <string name="search">Search</string>
     <string name="history">History</string>
     <string name="clear_history">Clear</string>
+
     <string name="scan_prompt">Point the camera at a QR code</string>
     <string name="scan_cancelled">Scan cancelled</string>
+
     <string name="copied">Copied to clipboard</string>
     <string name="clip_label">QR code</string>
+
     <string name="open">Open</string>
     <string name="cannot_open">No app found to open this</string>
     <string name="no_browser">No app found to open the link</string>
