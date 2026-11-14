@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">QR Сканер</string>
+
+    <string name="scan">Сканувати QR-код</string>
+    <string name="result_title">Результат</string>
+    <string name="no_result">Ще нічого не відскановано</string>
+    <string name="copy">Копіювати</string>
+    <string name="search">Шукати</string>
+    <string name="history">Історія</string>
+    <string name="clear_history">Очистити</string>
+
+    <string name="scan_prompt">Наведіть камеру на QR-код</string>
+    <string name="scan_cancelled">Сканування скасовано</string>
+
+    <string name="copied">Скопійовано в буфер обміну</string>
+    <string name="clip_label">QR-код</string>
+
+    <string name="no_browser">Не знайдено застосунку для відкриття посилання</string>
+</resources>
