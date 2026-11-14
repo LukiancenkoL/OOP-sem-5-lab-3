@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">QR Scanner</string>
+
+    <string name="scan">Scan QR code</string>
+    <string name="result_title">Result</string>
+    <string name="no_result">Nothing scanned yet</string>
+    <string name="copy">Copy</string>
+    <string name="search">Search</string>
+    <string name="history">History</string>
+    <string name="clear_history">Clear</string>
 </resources>

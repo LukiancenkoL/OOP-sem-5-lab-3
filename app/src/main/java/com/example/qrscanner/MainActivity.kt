@@ -16,5 +16,9 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        //comm 5 at end onCreate, after showValue(null):
+        // if (savedInstanceState == null) {
+        //     startScan()
+        // }
     }
 }
