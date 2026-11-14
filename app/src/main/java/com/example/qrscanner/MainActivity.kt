@@ -1,5 +1,7 @@
 package com.example.qrscanner
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
@@ -20,16 +22,17 @@ class MainActivity : AppCompatActivity() {
 
     private var currentValue: String? = null
 
-    private val scanLauncher = registerForActivityResult(ScanContract()) { result ->
-        val contents = result.contents
-        if (contents == null) {
-            Timber.i("Scan cancelled by user")
-            toast(R.string.scan_cancelled)
-        } else {
-            Timber.i("Scanned QR code, length=%d", contents.length)
-            showValue(contents)
+    private val scanLauncher =
+        registerForActivityResult(ScanContract()) { result ->
+            val contents = result.contents
+            if (contents == null) {
+                Timber.i("Scan cancelled by user")
+                toast(R.string.scan_cancelled)
+            } else {
+                Timber.i("Scanned QR code, length=%d", contents.length)
+                showValue(contents)
+            }
         }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,22 +50,24 @@ class MainActivity : AppCompatActivity() {
         searchButton = findViewById(R.id.searchButton)
 
         findViewById<Button>(R.id.scanButton).setOnClickListener { startScan() }
+        copyButton.setOnClickListener { currentValue?.let(::copyToClipboard) }
 
         showValue(null)
 
         if (savedInstanceState == null) {
             startScan()
         }
-        //end onCreate, after refreshHistory() і showValue(null).
+        // end onCreate, after refreshHistory() і showValue(null).
     }
 
     private fun startScan() {
         Timber.d("Starting scanner")
-        val options = ScanOptions()
-            .setDesiredBarcodeFormats(ScanOptions.QR_CODE)
-            .setPrompt(getString(R.string.scan_prompt))
-            .setBeepEnabled(false)
-            .setOrientationLocked(false)
+        val options =
+            ScanOptions()
+                .setDesiredBarcodeFormats(ScanOptions.QR_CODE)
+                .setPrompt(getString(R.string.scan_prompt))
+                .setBeepEnabled(false)
+                .setOrientationLocked(false)
         scanLauncher.launch(options)
     }
 
@@ -71,6 +76,13 @@ class MainActivity : AppCompatActivity() {
         resultText.text = value ?: getString(R.string.no_result)
         copyButton.isEnabled = value != null
         searchButton.isEnabled = value != null
+    }
+
+    private fun copyToClipboard(value: String) {
+        val clipboard = getSystemService(ClipboardManager::class.java)
+        clipboard.setPrimaryClip(ClipData.newPlainText(getString(R.string.clip_label), value))
+        Timber.i("Value copied to clipboard")
+        toast(R.string.copied)
     }
 
     private fun toast(resId: Int) = Toast.makeText(this, resId, Toast.LENGTH_SHORT).show()

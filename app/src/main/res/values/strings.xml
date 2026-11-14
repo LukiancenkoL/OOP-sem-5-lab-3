@@ -10,4 +10,6 @@
     <string name="clear_history">Clear</string>
     <string name="scan_prompt">Point the camera at a QR code</string>
     <string name="scan_cancelled">Scan cancelled</string>
+    <string name="copied">Copied to clipboard</string>
+    <string name="clip_label">QR code</string>
 </resources>
