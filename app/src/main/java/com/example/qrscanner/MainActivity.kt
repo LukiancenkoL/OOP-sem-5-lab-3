@@ -16,12 +16,16 @@ import androidx.core.view.WindowInsetsCompat
 import com.journeyapps.barcodescanner.ScanContract
 import com.journeyapps.barcodescanner.ScanOptions
 import timber.log.Timber
+import android.widget.ArrayAdapter
+import android.widget.ListView
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var resultText: TextView
     private lateinit var copyButton: Button
     private lateinit var searchButton: Button
+    private lateinit var history: HistoryStorage
+    private lateinit var historyAdapter: ArrayAdapter<String>
 
     private var currentValue: String? = null
 
@@ -33,6 +37,8 @@ class MainActivity : AppCompatActivity() {
                 toast(R.string.scan_cancelled)
             } else {
                 Timber.i("Scanned QR code, length=%d", contents.length)
+                history.add(contents)
+                refreshHistory()
                 showValue(contents)
             }
         }
@@ -48,6 +54,8 @@ class MainActivity : AppCompatActivity() {
         }
         Timber.d("MainActivity created")
 
+        history = HistoryStorage(this)
+
         resultText = findViewById(R.id.resultText)
         copyButton = findViewById(R.id.copyButton)
         searchButton = findViewById(R.id.searchButton)
@@ -57,6 +65,15 @@ class MainActivity : AppCompatActivity() {
         searchButton.setOnClickListener {
             currentValue?.let { if (canOpen(it)) openValue(it) else searchInWeb(it) }
         }
+
+        historyAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, mutableListOf())
+        val historyList = findViewById<ListView>(R.id.historyList)
+        historyList.adapter = historyAdapter
+        historyList.setOnItemClickListener { _, _, position, _ ->
+            historyAdapter.getItem(position)?.let(::showValue)
+        }
+
+        refreshHistory()
 
         showValue(null)
 
@@ -114,6 +131,11 @@ class MainActivity : AppCompatActivity() {
             Timber.w(e, "No app can open scheme=%s", uri.scheme)
             toast(R.string.cannot_open)
         }
+    }
+
+    private fun refreshHistory() {
+        historyAdapter.clear()
+        historyAdapter.addAll(history.getAll())
     }
 
     private fun toast(resId: Int) = Toast.makeText(this, resId, Toast.LENGTH_SHORT).show()
