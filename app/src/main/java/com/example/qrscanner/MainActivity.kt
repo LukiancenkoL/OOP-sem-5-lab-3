@@ -1,7 +1,10 @@
 package com.example.qrscanner
 
+import android.content.ActivityNotFoundException
 import android.content.ClipData
 import android.content.ClipboardManager
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
@@ -51,13 +54,15 @@ class MainActivity : AppCompatActivity() {
 
         findViewById<Button>(R.id.scanButton).setOnClickListener { startScan() }
         copyButton.setOnClickListener { currentValue?.let(::copyToClipboard) }
+        searchButton.setOnClickListener {
+            currentValue?.let { if (canOpen(it)) openValue(it) else searchInWeb(it) }
+        }
 
         showValue(null)
 
         if (savedInstanceState == null) {
             startScan()
         }
-        // end onCreate, after refreshHistory() і showValue(null).
     }
 
     private fun startScan() {
@@ -67,7 +72,6 @@ class MainActivity : AppCompatActivity() {
                 .setDesiredBarcodeFormats(ScanOptions.QR_CODE)
                 .setPrompt(getString(R.string.scan_prompt))
                 .setBeepEnabled(false)
-                .setOrientationLocked(false)
         scanLauncher.launch(options)
     }
 
@@ -76,6 +80,9 @@ class MainActivity : AppCompatActivity() {
         resultText.text = value ?: getString(R.string.no_result)
         copyButton.isEnabled = value != null
         searchButton.isEnabled = value != null
+        searchButton.setText(
+            if (value != null && canOpen(value)) R.string.open else R.string.search
+        )
     }
 
     private fun copyToClipboard(value: String) {
@@ -85,5 +92,35 @@ class MainActivity : AppCompatActivity() {
         toast(R.string.copied)
     }
 
+    private fun searchInWeb(value: String) {
+        val uri = Uri.parse("https://www.google.com/search?q=" + Uri.encode(value))
+        try {
+            startActivity(Intent(Intent.ACTION_VIEW, uri))
+            Timber.i("Opened web search")
+        } catch (e: ActivityNotFoundException) {
+            Timber.e(e, "No app found to open web search")
+            toast(R.string.no_browser)
+        }
+    }
+
+    private fun canOpen(value: String): Boolean = toUri(value).scheme in OPENABLE_SCHEMES
+
+    private fun openValue(value: String) {
+        val uri = toUri(value)
+        try {
+            startActivity(Intent(Intent.ACTION_VIEW, uri))
+            Timber.i("Opened value with scheme=%s", uri.scheme)
+        } catch (e: ActivityNotFoundException) {
+            Timber.w(e, "No app can open scheme=%s", uri.scheme)
+            toast(R.string.cannot_open)
+        }
+    }
+
     private fun toast(resId: Int) = Toast.makeText(this, resId, Toast.LENGTH_SHORT).show()
+
+    private fun toUri(value: String): Uri = Uri.parse(value.trim()).normalizeScheme()
+
+    private companion object {
+        val OPENABLE_SCHEMES = setOf("http", "https", "tel", "mailto", "geo", "sms", "smsto")
+    }
 }
