@@ -8,4 +8,6 @@
     <string name="search">Search</string>
     <string name="history">History</string>
     <string name="clear_history">Clear</string>
+    <string name="scan_prompt">Point the camera at a QR code</string>
+    <string name="scan_cancelled">Scan cancelled</string>
 </resources>
