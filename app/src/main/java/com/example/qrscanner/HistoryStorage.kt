@@ -21,6 +21,11 @@ class HistoryStorage(context: Context) {
         Timber.d("Saved to history, total items: %d", items.size)
     }
 
+    fun clear() {
+        prefs.edit().remove(KEY_HISTORY).apply()
+        Timber.d("History cleared")
+    }
+
     private companion object {
         const val PREFS_NAME = "qr_history"
         const val KEY_HISTORY = "items"

@@ -66,6 +66,11 @@ class MainActivity : AppCompatActivity() {
             currentValue?.let { if (canOpen(it)) openValue(it) else searchInWeb(it) }
         }
 
+        findViewById<Button>(R.id.clearButton).setOnClickListener {
+            history.clear()
+            refreshHistory()
+        }
+
         historyAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, mutableListOf())
         val historyList = findViewById<ListView>(R.id.historyList)
         historyList.adapter = historyAdapter
